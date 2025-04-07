@@ -1,0 +1,44 @@
+# source /opt/ros/humble/setup.bash
+# 第一到第四步主要来源:https://docs.ros.org/en/rolling/Tutorials/Advanced/Recording-A-Bag-From-Your-Own-Node-Py.html
+
+第一步：
+打开终端--bash1
+source /opt/ros/humble/setup.bash
+sudo apt install ros-humble-rosbag2
+# humble需要换成对应的版本
+
+第二步：
+首先打开一个新终端---bash2
+source /opt/ros/humble/setup.bash
+ros2 pkg create --build-type ament_python --license Apache-2.0 work3 --dependencies rclpy rosbag2_py sensor_msgs geometry_msgs numpy
+# work3为文件夹名称
+
+第三步:
+打开setup.py,修改entry_points
+entry_points={
+        'console_scripts': [
+            'talker = work3.talker:main',
+            'listener = wrok3.listener:main'
+        ],
+    },
+# talker, listener类名
+
+第四步:
+cd work3
+colcon build --packages-select work3
+source install/setup.bash
+ros2 run work3 talker
+# 如果遇到报错，则修改后需要重新进行第四步中的colcon及其后续命令
+# 保存的路径最好设置在工作区，也就是work3文件夹下，data也最好设置在同样的目录下
+# 如果bag_path已经存在, 应该更换路径或者删除源文件或者路径，rosbag2不能复写，所以目标目录不能存在
+# ros2 topic echo /lms 
+# /lms为定义的topic，上述指令可以监听读入rosbag中的数据内容
+
+
+第五步：
+# 如果修改了自己的文件，则需要下面的步骤
+colcon build --packages-select work3
+source install/setup.bash
+
+# 直接运行listener Node
+ros2 run work3 listener
